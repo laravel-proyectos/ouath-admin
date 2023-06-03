@@ -18,22 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('oauth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware('auth:api') -> group(function() {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
-    // Route::get('/permissions', [PermissionController::class, 'index']);
-    // Route::post('/permissions', [PermissionController::class, 'store']);
 });
-
-// Route::group(['middleware' => ['auth:api']], function () {
-//     Route::prefix('setup')
-// }); 
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
