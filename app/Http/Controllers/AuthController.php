@@ -13,7 +13,6 @@ use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends AccessTokenController
 {
