@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Setup\PermissionController;
+use App\Http\Controllers\Setup\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,13 +24,17 @@ Route::prefix('oauth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api') -> group(function() {
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
+    // Route::get('/permissions', [PermissionController::class, 'index']);
+    // Route::post('/permissions', [PermissionController::class, 'store']);
 });
 
-Route::get('/users', function(Request $request) {
-    return [
-        'name' => 'Merling Josue',
-        'lastName' => 'Ramirez Yugra',
-    ];
-});
+// Route::group(['middleware' => ['auth:api']], function () {
+//     Route::prefix('setup')
+// }); 
+
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

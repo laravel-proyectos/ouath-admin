@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends AccessTokenController
 {
@@ -98,6 +99,9 @@ class AuthController extends AccessTokenController
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
+
+        $role = Role::findOrFail($request->input('role_id'));
+        $user->assignRole($role);
         return response($user, 200);
     }
 }
