@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Setup\PermissionController;
 use App\Http\Controllers\Setup\RoleController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,12 @@ Route::prefix('oauth')->group(function () {
 Route::middleware('auth:api') -> group(function() {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
+    Route::get('users', function(Request $request) {
+        $users = User::with('roles')->get();
+        return response()->json([
+            'data' => $users,
+        ]);
+    });
 });
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
