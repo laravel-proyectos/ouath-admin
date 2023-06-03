@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Setup\RoleRequest;
 use App\Http\Requests\Setup\UpdateRoleRequest;
 use App\Http\Resources\Setup\RoleResource;
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,8 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        // $roles = Role::with('permissions')->get();
+        $roles = Role::all();
         return RoleResource::collection($roles);
     }
 
@@ -43,10 +43,6 @@ class RoleController extends Controller
         $role -> syncPermissions(Permission::whereIn('id', $request->input('permissions', []))->get());
         return response(new RoleResource($role), Response::HTTP_ACCEPTED);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $rol = Role::findOrFail($id);
