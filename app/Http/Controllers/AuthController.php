@@ -11,6 +11,9 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends AccessTokenController
 {
@@ -81,8 +84,14 @@ class AuthController extends AccessTokenController
         return response()->json($errorResponse, $e->getHttpStatusCode());
     }
 
-    public function logout()
+    public function logout( Request $request )
     {
+        $accessToken = $request->user()->token();
+
+        DB::table('oauth_access_tokens')
+        ->where('id', $accessToken->id)
+        ->update(['revoked' => true]);
+        
         $accessToken = Cookie::forget('access_token');
         $refreshToken = Cookie::forget('refresh_token');
         $expiresAt = Cookie::forget('expires_at');
