@@ -52,4 +52,19 @@ class RoleController extends Controller
         $rol->delete();
         return response()->json(['message' => 'El rol se ha eliminado exitosamente.'], 200);
     }
+
+    // public function exampleMethod()
+    // {
+    //     try {
+    //         // Lógica que puede generar una excepción
+    //         if ($someCondition) {
+    //             throw new Exception('Ocurrió un error.');
+    //         }
+    //     } catch (Exception $e) {
+    //         $errorMessage = $e->getMessage();
+
+    //         return response()->json(['message' => $errorMessage], 500);
+    //     }
+    // }
+
 }
