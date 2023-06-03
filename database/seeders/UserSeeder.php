@@ -16,10 +16,11 @@ class UserSeeder extends Seeder
         $user = User::create([
             'name' => 'Merling Josue Ramirez Yugra',
             'email' => 'ramirezjry17@gmail.com',
-            'password' => bcrypt('123456789')
+            'password' => bcrypt('123456789'),
+            'multi_session' => true,
         ]);
 
         $user->assignRole('admin');
-        User::factory(3) -> create();
+        // User::factory(3) -> create();
     }
 }

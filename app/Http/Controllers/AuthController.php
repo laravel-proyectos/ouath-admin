@@ -11,9 +11,9 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends AccessTokenController
 {
@@ -25,6 +25,19 @@ class AuthController extends AccessTokenController
             ]));
             $response = $this->server->respondToAccessTokenRequest($tokenRequest, new Response());
             $responseData = json_decode($response->getBody(), true);
+            $username = $request->getParsedBody()['username'];
+            $user = User::where('email', $username)->first();
+            // Revocar otros tokens si no es multisession
+            if ($user -> multi_session == 0) {
+                $latestToken = $user->tokens()->latest()->first();
+                if ($latestToken) {
+                    $tokensToRevoke = $user->tokens()->where('id', '!=', $latestToken->id)->get();
+
+                    foreach ($tokensToRevoke as $token) {
+                        $token->revoke();
+                    }
+                }
+            }
             return self::createSuccessResponse($responseData);
         } catch (OAuthServerException $e) {
             return self::createErrorResponse($e);
@@ -57,7 +70,6 @@ class AuthController extends AccessTokenController
         $accessToken = cookie('access_token', $responseData['access_token'], $cookieExpiration);
         $refreshToken = cookie('refresh_token', $responseData['refresh_token'], $cookieExpiration);
         $expiresAt = cookie('expires_at', now()->addSecond($responseData['expires_in']), $cookieExpiration);
-
         return response()->json(['status' => 'success'])
             ->withCookie($accessToken)
             ->withCookie($refreshToken)
@@ -91,7 +103,7 @@ class AuthController extends AccessTokenController
         DB::table('oauth_access_tokens')
         ->where('id', $accessToken->id)
         ->update(['revoked' => true]);
-        
+
         $accessToken = Cookie::forget('access_token');
         $refreshToken = Cookie::forget('refresh_token');
         $expiresAt = Cookie::forget('expires_at');
